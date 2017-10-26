@@ -11,7 +11,7 @@ class ChatInput extends Component {
     return (
       <div className="row">
         <div className="input-field col s8">
-          <input onKeyPress={this._handleKeyPress} onChange={e => this.props.updateMsg(e)}type="text"/>
+          <input value={this.props.value} onKeyPress={this._handleKeyPress.bind(this)} onChange={e => this.props.updateMsg(e)}type="text"/>
         </div>
         <div className="input-field col s4">
           <button onClick={this.props.sendMessage} className="waves-effect waves-light btn">

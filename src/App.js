@@ -36,7 +36,7 @@ class App extends Component {
           `,
         }
       });
-      const el = document.getElementById('chat-message')
+      const el = document.getElementById('chat-messages')
       el.scrollTop = el.scrollHeight; // auto scroll to bottom
     })
   }
@@ -76,7 +76,8 @@ class App extends Component {
   }
 
   gravatarURL(email) {
-    return `http://www.gravatar.com/avatar/${MD5(email)}`
+    const hash = MD5(email).toString();
+    return `http://www.gravatar.com/avatar/${hash}`
   }
 
   updateEmail(e) {
@@ -101,6 +102,7 @@ class App extends Component {
     let userInput;
     if (this.state.joined) {
       userInput = <ChatInput 
+                    value={this.state.newMsg}
                     sendMessage={() => this.send()}
                     updateMsg={e => this.updateMsg(e)}/>
     } else {
