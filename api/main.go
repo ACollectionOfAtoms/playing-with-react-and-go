@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"log"
 	"net/http"
@@ -11,14 +10,17 @@ import (
 // Oh dear. Globals...
 var clients = make(map[*websocket.Conn]bool)
 var broadcast = make(chan Message)
-// configure upgrader
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+} // configure upgrader
 // ...well.
 
 type Message struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Username string `json:"username"`
-	Message string `json:"message"`
+	Message  string `json:"message"`
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +49,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 func handleMessages() {
 	for {
 		// grab next message from the broadcast channel
-		msg := <- broadcast
+		msg := <-broadcast
 		// send it out to every client that is currently connected
 		for client := range clients {
 			err := client.WriteJSON(msg)
@@ -61,8 +63,8 @@ func handleMessages() {
 }
 
 func main() {
-	fs := http.FileServer(http.Dir("../public")
-	http.handle("/", fs)
+	fs := http.FileServer(http.Dir("../public"))
+	http.Handle("/", fs)
 	http.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
