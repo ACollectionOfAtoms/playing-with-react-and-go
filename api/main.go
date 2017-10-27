@@ -17,6 +17,7 @@ var upgrader = websocket.Upgrader{
 } // configure upgrader
 // ...well.
 
+// Message is an unexported struct to process incoming messages
 type Message struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
@@ -63,8 +64,6 @@ func handleMessages() {
 }
 
 func main() {
-	fs := http.FileServer(http.Dir("../public"))
-	http.Handle("/", fs)
 	http.HandleFunc("/ws", handleConnections)
 	go handleMessages()
 
